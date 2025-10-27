@@ -1,6 +1,7 @@
 {
   "name": "job-post-template-landing",
   "version": "1.0.0",
+  "type": "module",
   "description": "One-page landing page for job post template with email capture",
   "scripts": {
     "dev": "vercel dev"
