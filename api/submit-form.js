@@ -29,6 +29,10 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Email service not configured' });
     }
 
+    // Resend free tier only allows sending to your verified email
+    // For production, you need to verify a domain in Resend
+    console.log('Note: Resend free tier limits emails to verified address only');
+
     // Send email notification to you (admin)
     const adminEmailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -37,7 +41,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'onboarding@resend.dev',
+        from: 'Ana Mills <noreply@resend.dev>',
         to: RECIPIENT_EMAIL,
         reply_to: email,
         subject: 'New Job Post Template Request',
@@ -66,7 +70,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'onboarding@resend.dev',
+          from: 'Ana Mills <noreply@resend.dev>',
           to: email,
           subject: 'Your Ultimate Job Post Template',
           html: `
