@@ -8,6 +8,9 @@
   },
   "keywords": ["landing-page", "vercel"],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.4"
+  }
 }
 
