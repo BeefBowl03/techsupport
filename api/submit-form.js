@@ -58,68 +58,72 @@ export default async function handler(req, res) {
     }
 
     // Send automated email to the user with the guide
-    const userEmailResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'onboarding@resend.dev',
-        to: email,
-        subject: 'Your Ultimate Job Post Template',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background-color: #10b981; padding: 20px; text-align: center;">
-              <span style="color: white; font-weight: bold; font-size: 18px;">ANA MILLS</span>
-            </div>
-            
-            <div style="padding: 40px 20px; background-color: #ffffff;">
-              <h2 style="color: #1f2937; margin-bottom: 20px;">Hey ${name}!</h2>
-              
-              <p style="color: #4b5563; line-height: 1.6; margin-bottom: 20px;">
-                Thank you for requesting The Ultimate Job Post Template!
-              </p>
-              
-              <p style="color: #4b5563; line-height: 1.6; margin-bottom: 30px;">
-                I'm excited to help you find your dream team member. This template is designed to save you time and help you hire the right candidate with ease.
-              </p>
-              
-              <div style="background-color: #10b981; padding: 15px; margin: 30px 0; text-align: center; border-radius: 5px;">
-                <a href="YOUR-GUIDE-DOWNLOAD-LINK-HERE" style="color: white; text-decoration: none; font-weight: bold;">
-                  DOWNLOAD YOUR FREE GUIDE
-                </a>
+    try {
+      const userEmailResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'onboarding@resend.dev',
+          to: email,
+          subject: 'Your Ultimate Job Post Template',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background-color: #10b981; padding: 20px; text-align: center;">
+                <span style="color: white; font-weight: bold; font-size: 18px;">ANA MILLS</span>
               </div>
               
-              <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin-top: 30px;">
-                <strong>What's Inside:</strong><br>
-                ✓ A proven job post template that attracts top talent<br>
-                ✓ Tips for writing compelling job descriptions<br>
-                ✓ Time-saving strategies to streamline your hiring process<br>
-                ✓ Best practices to help you hire the right candidate
-              </p>
+              <div style="padding: 40px 20px; background-color: #ffffff;">
+                <h2 style="color: #1f2937; margin-bottom: 20px;">Hey ${name}!</h2>
+                
+                <p style="color: #4b5563; line-height: 1.6; margin-bottom: 20px;">
+                  Thank you for requesting The Ultimate Job Post Template!
+                </p>
+                
+                <p style="color: #4b5563; line-height: 1.6; margin-bottom: 30px;">
+                  I'm excited to help you find your dream team member. This template is designed to save you time and help you hire the right candidate with ease.
+                </p>
+                
+                <div style="background-color: #10b981; padding: 15px; margin: 30px 0; text-align: center; border-radius: 5px;">
+                  <a href="YOUR-GUIDE-DOWNLOAD-LINK-HERE" style="color: white; text-decoration: none; font-weight: bold;">
+                    DOWNLOAD YOUR FREE GUIDE
+                  </a>
+                </div>
+                
+                <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin-top: 30px;">
+                  <strong>What's Inside:</strong><br>
+                  ✓ A proven job post template that attracts top talent<br>
+                  ✓ Tips for writing compelling job descriptions<br>
+                  ✓ Time-saving strategies to streamline your hiring process<br>
+                  ✓ Best practices to help you hire the right candidate
+                </p>
+                
+                <p style="color: #9ca3af; font-size: 12px; margin-top: 40px; text-align: center;">
+                  We respect your privacy. You can unsubscribe at any time.
+                </p>
+              </div>
               
-              <p style="color: #9ca3af; font-size: 12px; margin-top: 40px; text-align: center;">
-                We respect your privacy. You can unsubscribe at any time.
-              </p>
+              <div style="background-color: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #6b7280;">
+                <p>BUILT WITH</p>
+                <p style="margin-top: 10px;">ConvertKit</p>
+              </div>
             </div>
-            
-            <div style="background-color: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #6b7280;">
-              <p>BUILT WITH</p>
-              <p style="margin-top: 10px;">ConvertKit</p>
-            </div>
-          </div>
-        `,
-      }),
-    });
+          `,
+        }),
+      });
 
-    // Log the result
-    if (userEmailResponse.ok) {
-      console.log('Form submission processed successfully:', { name, email });
-    } else {
-      const userError = await userEmailResponse.text();
-      console.error('Failed to send user email:', userError);
-      // Still return success since admin notification was sent
+      if (!userEmailResponse.ok) {
+        const userError = await userEmailResponse.text();
+        console.error('Failed to send user email:', userError);
+        console.error('Status:', userEmailResponse.status);
+      } else {
+        const userEmailData = await userEmailResponse.json();
+        console.log('Customer email sent successfully:', userEmailData);
+      }
+    } catch (emailError) {
+      console.error('Error sending customer email:', emailError.message);
     }
 
     // Return success response
